@@ -1,5 +1,3 @@
-!pip install joblib
-
 
 import streamlit as st
 import joblib  # Utilisation de joblib pour charger le modèle
