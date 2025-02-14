@@ -10,3 +10,4 @@ scipy
 nltk
 spacy
 transformers
+en-core-web-sm
