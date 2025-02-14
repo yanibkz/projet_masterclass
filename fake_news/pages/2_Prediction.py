@@ -1,5 +1,5 @@
 import streamlit as st
-import joblib  # Utilisation de joblib pour charger le modèle
+import joblib  # Pour charger le modèle
 import plotly.graph_objects as go
 import os
 import spacy
@@ -7,9 +7,8 @@ import spacy
 # Charger le modèle de langue spaCy pour la lemmatisation
 nlp = spacy.load("en_core_web_sm")
 
-# Déterminer le chemin absolu du dossier racine
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # Remonte d'un niveau
-MODEL_DIR = os.path.join(BASE_DIR, "fake_news")  # Dossier contenant les modèles
+# Déterminer le chemin du dossier contenant ce script (racine du projet)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Racine du projet
 
 # Fonction pour afficher la probabilité de prédiction
 def plot_gauge(prob):
@@ -39,7 +38,7 @@ def plot_gauge(prob):
 # Charger le modèle de régression logistique
 @st.cache_resource
 def load_model():
-    model_path = os.path.join(MODEL_DIR, "logistic_regression_model.pkl")
+    model_path = os.path.join(BASE_DIR, "logistic_regression_model.pkl")
     try:
         model = joblib.load(model_path)  # Charger le modèle enregistré
         return model
@@ -59,7 +58,7 @@ if model is not None:
 # Charger le vectorizer TF-IDF utilisé lors de l'entraînement
 @st.cache_resource
 def load_vectorizer():
-    vectorizer_path = os.path.join(MODEL_DIR, "tfidf_vectorizer.pkl")
+    vectorizer_path = os.path.join(BASE_DIR, "tfidf_vectorizer.pkl")
     try:
         vectorizer = joblib.load(vectorizer_path)  # Charger le vectorizer TF-IDF
         return vectorizer
