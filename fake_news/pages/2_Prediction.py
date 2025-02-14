@@ -7,7 +7,7 @@ import spacy
 
 # Définir le chemin local du modèle spaCy
 MODEL_DIR = os.path.dirname(os.path.abspath(__file__))  # Récupère le dossier de 2_Prediction.py
-SPACY_MODEL_PATH = os.path.join(MODEL_DIR, "en_core_web_sm")  # Dossier du modèle
+SPACY_MODEL_PATH = os.path.join(MODEL_DIR, "en_core_web_sm_model")  # Dossier du modèle
 
 try:
     nlp = spacy.load(SPACY_MODEL_PATH)  # Charger le modèle local
