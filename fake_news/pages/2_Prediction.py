@@ -1,7 +1,15 @@
-
 import streamlit as st
 import joblib  # Utilisation de joblib pour charger le modèle
 import plotly.graph_objects as go
+import os
+import spacy
+
+# Charger le modèle de langue spaCy pour la lemmatisation
+nlp = spacy.load("en_core_web_sm")
+
+# Déterminer le chemin absolu du dossier racine
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # Remonte d'un niveau
+MODEL_DIR = os.path.join(BASE_DIR, "fake_news")  # Dossier contenant les modèles
 
 # Fonction pour afficher la probabilité de prédiction
 def plot_gauge(prob):
@@ -31,11 +39,12 @@ def plot_gauge(prob):
 # Charger le modèle de régression logistique
 @st.cache_resource
 def load_model():
+    model_path = os.path.join(MODEL_DIR, "logistic_regression_model.pkl")
     try:
-        model = joblib.load("logistic_regression_model.pkl")  # Charger le modèle enregistré
+        model = joblib.load(model_path)  # Charger le modèle enregistré
         return model
     except FileNotFoundError:
-        st.error("Le fichier 'logistic_regression_model.pkl' n'a pas été trouvé.")
+        st.error(f"Le fichier '{model_path}' n'a pas été trouvé.")
         return None
     except Exception as e:
         st.error(f"Erreur lors du chargement du modèle : {e}")
@@ -50,11 +59,12 @@ if model is not None:
 # Charger le vectorizer TF-IDF utilisé lors de l'entraînement
 @st.cache_resource
 def load_vectorizer():
+    vectorizer_path = os.path.join(MODEL_DIR, "tfidf_vectorizer.pkl")
     try:
-        vectorizer = joblib.load("tfidf_vectorizer.pkl")  # Charger le vectorizer TF-IDF
+        vectorizer = joblib.load(vectorizer_path)  # Charger le vectorizer TF-IDF
         return vectorizer
     except FileNotFoundError:
-        st.error("Le fichier 'tfidf_vectorizer.pkl' n'a pas été trouvé.")
+        st.error(f"Le fichier '{vectorizer_path}' n'a pas été trouvé.")
         return None
 
 vectorizer = load_vectorizer()
@@ -63,12 +73,18 @@ vectorizer = load_vectorizer()
 if vectorizer is None:
     st.stop()
 
-# Prétraitement du texte
+# Fonction de prétraitement avancé du texte
 def preprocess_text(text):
-    # Appliquer le prétraitement (en minuscules, suppression des stopwords, lemmatisation)
-    text = text.lower()  # Convertir en minuscules
-    # Ajoute ici la logique de suppression des stopwords, lemmatisation, etc.
-    return text
+    if isinstance(text, str):  # Vérifier que c'est bien du texte
+        doc = nlp(text.lower())  # Convertir en minuscules et tokeniser avec spaCy
+        tokens = [
+            token.lemma_ for token in doc  # Lemmatisation
+            if not token.is_stop  # Suppression des stopwords
+            and token.is_alpha  # Garde uniquement les mots (pas de ponctuation, chiffres...)
+            and len(token.lemma_) > 2  # Supprime les mots de moins de 3 lettres
+        ]
+        return " ".join(tokens)  # Reconstruction du texte nettoyé
+    return ""
 
 # Interface utilisateur pour la prédiction
 st.title("Prédiction - Fake News")
