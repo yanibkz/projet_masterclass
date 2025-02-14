@@ -3,15 +3,17 @@ import joblib  # Pour charger le modèle
 import plotly.graph_objects as go
 import os
 import spacy
-import subprocess
 
-# Vérifie si le modèle spaCy est installé, sinon l'installe
+
+# Définir le chemin local du modèle spaCy
+MODEL_DIR = os.path.dirname(os.path.abspath(__file__))  # Récupère le dossier de 2_Prediction.py
+SPACY_MODEL_PATH = os.path.join(MODEL_DIR, "en_core_web_sm")  # Dossier du modèle
+
 try:
-    nlp = spacy.load("en_core_web_sm")
-except OSError:
-    subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"])
-    nlp = spacy.load("en_core_web_sm")
-# Déterminer le chemin du modèle local
+    nlp = spacy.load(SPACY_MODEL_PATH)  # Charger le modèle local
+    print("✅ Modèle spaCy chargé avec succès depuis le dossier local")
+except Exception as e:
+    print(f"❌ Erreur lors du chargement du modèle spaCy : {e}")
 
 
 # Déterminer le chemin du dossier contenant ce script (racine du projet)
