@@ -3,13 +3,16 @@ import joblib  # Pour charger le modèle
 import plotly.graph_objects as go
 import os
 import spacy
+import subprocess
 
+# Vérifie si le modèle spaCy est installé, sinon l'installe
+try:
+    nlp = spacy.load("en_core_web_sm")
+except OSError:
+    subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"])
+    nlp = spacy.load("en_core_web_sm")
 # Déterminer le chemin du modèle local
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Chemin du dossier contenant ce script
-MODEL_PATH = os.path.join(BASE_DIR, "en_core_web_sm")  # Modèle à côté de Home.py
 
-# Charger le modèle spaCy à partir du dossier local
-nlp = spacy.load(MODEL_PATH)
 
 # Déterminer le chemin du dossier contenant ce script (racine du projet)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Racine du projet
